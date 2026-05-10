@@ -773,10 +773,25 @@ async function loadData() {
 }
 
 // ── CSV PARSER ──────────────────────────────────────────────────
-function parseCSV(csv) {
+function parseCSV(csv, type) {
   const lines = csv.trim().split('\n');
   if (lines.length < 2) return [];
 
+  if (type === 'comments') {
+    return lines.slice(1).map(line => {
+      const cols = parseCSVLine(line);
+      return {
+        id:          cols[0] || '',
+        date:        cols[1] || '',
+        name:        cols[2] || 'Anonymous',
+        comment:     cols[3] || '',
+        submittedAt: cols[4] || '',
+        approved:    cols[5] || '',
+      };
+    }).filter(r => r.date && r.comment);
+  }
+
+  // Default: checkins
   return lines.slice(1).map(line => {
     const cols = parseCSVLine(line);
     return {
@@ -1001,16 +1016,22 @@ async function loadComments(date) {
     '<div class="no-comments">Loading comments...</div>';
 
   try {
-    const res = await fetch(`${WEBAPP_URL}?date=${date}`);
-    const data = await res.json();
+    // Read comments directly from published Google Sheet (avoids CORS issues)
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=comments`;
+    const res = await fetch(url);
+    const csv = await res.text();
+    const rows = parseCSV(csv, 'comments');
 
-    if (!data.success || data.comments.length === 0) {
+    // Filter to this date and approved only
+    const comments = rows.filter(r => r.date === date && (r.approved === 'TRUE' || r.approved === true));
+
+    if (comments.length === 0) {
       document.getElementById('comment-list').innerHTML =
         '<div class="no-comments">No comments yet — be the first!</div>';
       return;
     }
 
-    document.getElementById('comment-list').innerHTML = data.comments.map(c => `
+    document.getElementById('comment-list').innerHTML = comments.map(c => `
       <div class="comment-item">
         <div class="comment-author">${escHtml(c.name)}</div>
         <div class="comment-text">${escHtml(c.comment)}</div>
