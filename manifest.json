@@ -1,0 +1,22 @@
+{
+  "name": "Hot Sauce on the CDT",
+  "short_name": "Hot Sauce CDT",
+  "description": "Follow Anthony 'Hot Sauce' Foti on his 2026 Continental Divide Trail thru-hike",
+  "start_url": "/hotsauce-cdt/",
+  "display": "standalone",
+  "background_color": "#1a0a00",
+  "theme_color": "#1a0a00",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
