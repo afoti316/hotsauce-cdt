@@ -746,11 +746,13 @@ function initMap() {
 // ── LOAD DATA ───────────────────────────────────────────────────
 async function loadData() {
   try {
-    // Fetch checkins sheet as CSV (export format avoids CORS issues)
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=checkins`;
-    const res = await fetch(url, { redirect: 'follow' });
+    // Fetch checkins sheet as CSV
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=checkins`;
+    const res = await fetch(url);
     const csv = await res.text();
+    console.log('CSV first 300 chars:', csv.substring(0, 300));
     checkins = parseCSV(csv);
+    console.log('Parsed checkins count:', checkins.length);
 
     if (checkins.length === 0) {
       document.getElementById('last-message').textContent = 'No check-ins yet.';
