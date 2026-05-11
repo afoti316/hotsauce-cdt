@@ -681,7 +681,7 @@ const TOTAL_MILES = 3100;
 
 // CDT route key waypoints for drawing the trail line
 const CDT_LINE = [
-  [31.3338,-108.6985],[31.5500,-108.5800],[31.7500,-108.4500],
+  [31.497138,-108.208959],[31.5500,-108.5800],[31.7500,-108.4500],
   [31.9092,-108.4132],[32.1500,-108.2800],[32.3800,-108.0500],
   [32.7700,-107.9800],[33.0500,-107.6500],[33.3500,-107.2000],
   [33.8500,-106.9000],[34.1500,-106.7500],[34.5000,-106.9000],
@@ -761,8 +761,8 @@ function initMap() {
   }).addTo(map);
 
   // Start and end markers
-  L.circleMarker([31.3338, -108.6985], { radius: 5, color: '#d4870a', fillColor: '#d4870a', fillOpacity: 1, weight: 2 })
-    .bindTooltip('Southern Terminus 🌵', { permanent: false })
+  L.circleMarker([31.497138, -108.208959], { radius: 5, color: '#d4870a', fillColor: '#d4870a', fillOpacity: 1, weight: 2 })
+    .bindTooltip('Hot Sauce Start — May 7 🌵', { permanent: false })
     .addTo(map);
 
   L.circleMarker([48.9990, -114.0720], { radius: 5, color: '#4a6741', fillColor: '#4a6741', fillOpacity: 1, weight: 2 })
@@ -914,7 +914,7 @@ function renderMap() {
 
   // Draw hiked segment in bright orange
   const hikedLine = validCheckins.map(c => [c.lat, c.lon]);
-  L.polyline([[31.3338, -108.6985], ...hikedLine], {
+  L.polyline([[31.497138, -108.208959], ...hikedLine], {
     color: '#E8450A',
     weight: 5,
     opacity: 0.95
