@@ -714,6 +714,9 @@ const CDT_LINE = [[31.4971,-108.2085],[31.4978,-108.2142],[31.4965,-108.2198],[3
 function initMap() {
   map = L.map('map', { zoomControl: true, attributionControl: false });
 
+  // Highlighted segment layer
+  let highlightedSegment = null;
+
   // Map layers
   const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
     maxZoom: 17,
@@ -994,6 +997,13 @@ function renderChart() {
 function openPopup(checkin) {
   currentPopupDate = checkin.date;
 
+  // Find previous checkin for segment highlighting
+  const idx = checkins.findIndex(c => c.date === checkin.date);
+  const prev = idx > 0 ? checkins[idx - 1] : null;
+  if (prev && prev.lat && prev.lon) {
+    highlightCDTSegment(checkin, prev);
+  }
+
   document.getElementById('popup-date').textContent = formatDate(checkin.date);
 
   const statsHtml = [
@@ -1024,9 +1034,52 @@ function openPopup(checkin) {
   document.getElementById('day-popup').classList.add('open');
 }
 
+function highlightCDTSegment(checkin, prevCheckin) {
+  // Remove previous highlight
+  if (highlightedSegment) {
+    map.removeLayer(highlightedSegment);
+    highlightedSegment = null;
+  }
+
+  if (!prevCheckin || !checkin.lat || !checkin.lon) return;
+
+  // Find nearest CDT_LINE indices for both points
+  function nearestIdx(lat, lon) {
+    let minDist = Infinity;
+    let idx = 0;
+    for (let i = 0; i < CDT_LINE.length; i++) {
+      const d = Math.pow(CDT_LINE[i][0] - lat, 2) + Math.pow(CDT_LINE[i][1] - lon, 2);
+      if (d < minDist) { minDist = d; idx = i; }
+    }
+    return idx;
+  }
+
+  const fromIdx = nearestIdx(prevCheckin.lat, prevCheckin.lon);
+  const toIdx   = nearestIdx(checkin.lat, checkin.lon);
+
+  if (fromIdx === toIdx) return;
+
+  const start = Math.min(fromIdx, toIdx);
+  const end   = Math.max(fromIdx, toIdx);
+  const segment = CDT_LINE.slice(start, end + 1);
+
+  highlightedSegment = L.polyline(segment, {
+    color: '#E8450A',
+    weight: 4,
+    opacity: 0.9
+  }).addTo(map);
+
+  // Fit map to segment
+  map.fitBounds(highlightedSegment.getBounds(), { padding: [60, 60] });
+}
+
 function closePopup() {
   document.getElementById('day-popup').classList.remove('open');
   currentPopupDate = null;
+  if (highlightedSegment) {
+    map.removeLayer(highlightedSegment);
+    highlightedSegment = null;
+  }
 }
 
 // ── COMMENTS ────────────────────────────────────────────────────
