@@ -819,8 +819,14 @@ async function loadData() {
     renderMap();
     renderChart();
 
-    document.getElementById('last-update').textContent =
-      'Updated ' + formatRelativeTime(checkins[checkins.length - 1].date);
+    const lastCheckin = checkins[checkins.length - 1];
+  const lastTime = lastCheckin.timestamp ? new Date(lastCheckin.timestamp) : null;
+  const timeStr = lastTime ? lastTime.toLocaleString('en-US', {
+    month: 'short', day: 'numeric',
+    hour: 'numeric', minute: '2-digit',
+    timeZoneName: 'short'
+  }) : formatRelativeTime(lastCheckin.date);
+  document.getElementById('last-update').textContent = 'Last ping: ' + timeStr;
 
   } catch(e) {
     console.error('Data load error:', e);
@@ -926,8 +932,11 @@ function renderPanel() {
   // Last check-in card
   document.getElementById('last-message').textContent =
     last.message || 'Everything is okay.';
+  const metaTime = last.timestamp ? new Date(last.timestamp).toLocaleTimeString('en-US', {
+    hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+  }) : '';
   document.getElementById('last-meta').textContent =
-    `${formatDate(last.date)} · ${last.state || 'NM'} · Mile ${Math.round(last.trailMile)}`;
+    `${formatDate(last.date)}${metaTime ? ' at ' + metaTime : ''} · ${last.state || 'NM'} · Mile ${Math.round(last.trailMile)}`;
 
   // Canada countdown
   document.getElementById('miles-to-canada').innerHTML =
