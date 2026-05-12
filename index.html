@@ -805,9 +805,12 @@ async function loadData() {
       const pingsUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=raw_pings`;
       const pingsRes = await fetch(pingsUrl);
       const pingsCsv = await pingsRes.text();
+      console.log('raw_pings CSV first 200:', pingsCsv.substring(0, 200));
       rawPings = parseRawPings(pingsCsv);
+      console.log('rawPings parsed:', rawPings.length, rawPings);
     } catch(e) {
-      rawPings = []; // raw_pings tab doesn't exist yet
+      console.log('raw_pings fetch error:', e);
+      rawPings = [];
     }
 
     if (checkins.length === 0) {
