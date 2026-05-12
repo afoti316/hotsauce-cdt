@@ -824,8 +824,9 @@ async function loadData() {
   const timeStr = lastTime ? lastTime.toLocaleString('en-US', {
     month: 'short', day: 'numeric',
     hour: 'numeric', minute: '2-digit',
-    timeZoneName: 'short'
-  }) : formatRelativeTime(lastCheckin.date);
+    timeZone: 'America/Denver',
+    hour12: true
+  }) + ' PT' : formatRelativeTime(lastCheckin.date);
   document.getElementById('last-update').textContent = 'Last ping: ' + timeStr;
 
   } catch(e) {
@@ -933,8 +934,10 @@ function renderPanel() {
   document.getElementById('last-message').textContent =
     last.message || 'Everything is okay.';
   const metaTime = last.timestamp ? new Date(last.timestamp).toLocaleTimeString('en-US', {
-    hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
-  }) : '';
+    hour: 'numeric', minute: '2-digit',
+    timeZone: 'America/Denver',
+    hour12: true
+  }) + ' PT' : '';
   document.getElementById('last-meta').textContent =
     `${formatDate(last.date)}${metaTime ? ' at ' + metaTime : ''} · ${last.state || 'NM'} · Mile ${Math.round(last.trailMile)}`;
 
