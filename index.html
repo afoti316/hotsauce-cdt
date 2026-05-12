@@ -589,7 +589,7 @@
     .day-marker.hitchhike { background: var(--gold); }
     .day-marker.estimated { background: var(--sage); }
     .day-marker.latest    { background: var(--ember-lt); box-shadow: 0 0 0 4px rgba(231,76,60,0.3); width:16px; height:16px; }
-    .day-marker.intraday  { background: #E8450A; opacity: 0.5; width:8px; height:8px; }
+    .day-marker.intraday  { background: #E8450A; opacity: 0.7; width:12px; height:12px; border: 2px dashed white; }
   </style>
 </head>
 
@@ -982,8 +982,8 @@ function renderMap() {
       const icon = L.divIcon({
         className: '',
         html: `<div class="day-marker intraday"></div>`,
-        iconSize: [8, 8],
-        iconAnchor: [4, 4]
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
       });
       L.marker([p.lat, p.lon], { icon })
         .addTo(map)
