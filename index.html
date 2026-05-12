@@ -961,6 +961,7 @@ function renderMap() {
   }).addTo(map);
 
   // Intraday ping dots (smaller, from raw_pings tab)
+  console.log('renderMap rawPings:', rawPings.length);
   if (rawPings.length > 0) {
     // Group raw pings by date, find last ping per date
     const lastPingByDate = {};
@@ -969,11 +970,13 @@ function renderMap() {
         lastPingByDate[p.date] = p;
       }
     });
+    console.log('lastPingByDate:', JSON.stringify(lastPingByDate));
 
     rawPings.forEach(p => {
       if (!p.lat || !p.lon) return;
       // Skip if this is the last ping of the day (already shown as main dot)
       const lastPing = lastPingByDate[p.date];
+      console.log('ping:', p.timestamp, 'lastPing:', lastPing && lastPing.timestamp, 'skip:', lastPing && p.timestamp === lastPing.timestamp);
       if (lastPing && p.timestamp === lastPing.timestamp) return;
 
       const icon = L.divIcon({
