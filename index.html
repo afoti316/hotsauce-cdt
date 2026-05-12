@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hot Sauce on the CDT <img src="icon-192.png" style="height:20px;width:20px;border-radius:4px;vertical-align:middle;"></title>
+  <title>Hot Sauce on the CDT 🌶️</title>
   <meta name="description" content="Follow Anthony 'Hot Sauce' Foti on his 2026 Continental Divide Trail thru-hike — Mexico to Canada." />
 
   <!-- Google Analytics -->
@@ -730,7 +730,7 @@ function parseRawPings(csv) {
       lon:       parseFloat(cols[3]) || 0,
       message:   cols[6] || '',
     };
-  }).filter(r => r.lat !== 0);
+  }).filter(r => r.lat !== 0 && r.date !== '');
 }
 
 // ── MAP SETUP ───────────────────────────────────────────────────
@@ -959,12 +959,20 @@ function renderMap() {
 
   // Intraday ping dots (smaller, from raw_pings tab)
   if (rawPings.length > 0) {
-    // Find pings that aren't the final ping of their day
-    const finalPositions = new Set(validCheckins.map(c => `${c.lat},${c.lon}`));
+    // Group raw pings by date, find last ping per date
+    const lastPingByDate = {};
+    rawPings.forEach(p => {
+      if (!lastPingByDate[p.date] || p.timestamp > lastPingByDate[p.date].timestamp) {
+        lastPingByDate[p.date] = p;
+      }
+    });
+
     rawPings.forEach(p => {
       if (!p.lat || !p.lon) return;
-      const key = `${p.lat},${p.lon}`;
-      if (finalPositions.has(key)) return; // skip final pings, already shown
+      // Skip if this is the last ping of the day (already shown as main dot)
+      const lastPing = lastPingByDate[p.date];
+      if (lastPing && p.timestamp === lastPing.timestamp) return;
+
       const icon = L.divIcon({
         className: '',
         html: `<div class="day-marker intraday"></div>`,
@@ -973,7 +981,7 @@ function renderMap() {
       });
       L.marker([p.lat, p.lon], { icon })
         .addTo(map)
-        .bindPopup(`<b>${p.date}</b><br>${p.message || 'Check-in'}`);
+        .bindPopup(`<b>${p.date} — midday</b><br>${p.message || 'Check-in'}`);
     });
   }
 
