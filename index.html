@@ -961,13 +961,37 @@ function renderMap() {
   const validCheckins = checkins.filter(c => c.lat && c.lon);
   if (validCheckins.length === 0) return;
 
-  // Draw hiked segment in bright orange
-  const hikedLine = validCheckins.map(c => [c.lat, c.lon]);
-  L.polyline([[31.497138, -108.208959], ...hikedLine], {
-    color: '#E8450A',
-    weight: 5,
-    opacity: 0.95
-  }).addTo(map);
+  // Draw hiked path along actual CDT route between check-in points
+  function nearestCDTIndex(lat, lon) {
+    let minDist = Infinity, idx = 0;
+    for (let i = 0; i < CDT_LINE.length; i++) {
+      const d = (CDT_LINE[i][0] - lat) ** 2 + (CDT_LINE[i][1] - lon) ** 2;
+      if (d < minDist) { minDist = d; idx = i; }
+    }
+    return idx;
+  }
+
+  // Build list of points including his start
+  const allPoints = [
+    { lat: 31.497138, lon: -108.208959 },
+    ...validCheckins.filter(c => c.lat && c.lon && !c.outlierFlag)
+  ];
+
+  // Draw CDT segments between consecutive points
+  for (let i = 1; i < allPoints.length; i++) {
+    const fromIdx = nearestCDTIndex(allPoints[i-1].lat, allPoints[i-1].lon);
+    const toIdx   = nearestCDTIndex(allPoints[i].lat, allPoints[i].lon);
+    const start = Math.min(fromIdx, toIdx);
+    const end   = Math.max(fromIdx, toIdx);
+    const segment = CDT_LINE.slice(start, end + 1);
+    if (segment.length > 1) {
+      L.polyline(segment, {
+        color: '#E8450A',
+        weight: 4,
+        opacity: 0.9
+      }).addTo(map);
+    }
+  }
 
   // Intraday ping dots (smaller, from raw_pings tab)
   if (rawPings.length > 0) {
