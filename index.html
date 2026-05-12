@@ -795,14 +795,14 @@ let rawPings = [];
 async function loadData() {
   try {
     // Fetch checkins sheet as CSV
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=checkins`;
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=checkins&t=${Date.now()}`;
     const res = await fetch(url);
     const csv = await res.text();
     checkins = parseCSV(csv);
 
     // Fetch raw pings for intraday dots (may not exist yet)
     try {
-      const pingsUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=raw_pings`;
+      const pingsUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=raw_pings&t=${Date.now()}`;
       const pingsRes = await fetch(pingsUrl);
       const pingsCsv = await pingsRes.text();
         rawPings = parseRawPings(pingsCsv);
@@ -1115,7 +1115,7 @@ async function loadComments(date) {
 
   try {
     // Read comments directly from published Google Sheet (avoids CORS issues)
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=comments`;
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=comments&t=${Date.now()}`;
     const res = await fetch(url);
     const csv = await res.text();
     const rows = parseCSV(csv, 'comments');
