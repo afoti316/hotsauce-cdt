@@ -805,12 +805,9 @@ async function loadData() {
       const pingsUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=raw_pings`;
       const pingsRes = await fetch(pingsUrl);
       const pingsCsv = await pingsRes.text();
-      console.log('raw_pings CSV first 200:', pingsCsv.substring(0, 200));
-      rawPings = parseRawPings(pingsCsv);
-      console.log('rawPings parsed:', rawPings.length, rawPings);
-    } catch(e) {
-      console.log('raw_pings fetch error:', e);
-      rawPings = [];
+        rawPings = parseRawPings(pingsCsv);
+      } catch(e) {
+        rawPings = [];
     }
 
     if (checkins.length === 0) {
@@ -961,7 +958,6 @@ function renderMap() {
   }).addTo(map);
 
   // Intraday ping dots (smaller, from raw_pings tab)
-  console.log('renderMap rawPings:', rawPings.length);
   if (rawPings.length > 0) {
     // Group raw pings by date, find last ping per date
     const lastPingByDate = {};
@@ -970,13 +966,11 @@ function renderMap() {
         lastPingByDate[p.date] = p;
       }
     });
-    console.log('lastPingByDate:', JSON.stringify(lastPingByDate));
 
     rawPings.forEach(p => {
       if (!p.lat || !p.lon) return;
       // Skip if this is the last ping of the day (already shown as main dot)
       const lastPing = lastPingByDate[p.date];
-      console.log('ping:', p.timestamp, 'lastPing:', lastPing && lastPing.timestamp, 'skip:', lastPing && p.timestamp === lastPing.timestamp);
       if (lastPing && p.timestamp === lastPing.timestamp) return;
 
       const icon = L.divIcon({
