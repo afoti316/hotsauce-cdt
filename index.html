@@ -719,7 +719,8 @@ let milesChart = null;
 window.addEventListener('load', async () => {
   initMap();
   await loadData();
-  loadSubstackLatest();
+  // Load Substack after a short delay so it never impacts initial render
+  setTimeout(() => loadSubstackLatest(), 500);
   setTimeout(() => {
     document.getElementById('loading').classList.add('fade');
     setTimeout(() => document.getElementById('loading').remove(), 700);
