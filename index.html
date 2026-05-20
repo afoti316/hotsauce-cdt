@@ -715,6 +715,30 @@ const CDT_MILE_OFFSET = 8.33; // Calibrated offset
 let map, checkins = [], currentPopupDate = null;
 let milesChart = null;
 
+// ── SUBSTACK RSS ─────────────────────────────────────────────────
+async function loadSubstackLatest() {
+  try {
+    const rssUrl = encodeURIComponent('https://saucyhikes.substack.com/feed');
+    const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
+    const data = await res.json();
+    if (data.status === 'ok' && data.items && data.items.length > 0) {
+      const post = data.items[0];
+      const timeAgo = formatRelativeTime(new Date(post.pubDate).toISOString());
+      const titleEl = document.getElementById('substack-title');
+      const metaEl = document.getElementById('substack-meta');
+      const cardEl = document.getElementById('substack-card');
+      const postDate = new Date(post.pubDate).toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Denver'
+      });
+      if (titleEl) titleEl.textContent = post.title || 'Latest audio note';
+      if (metaEl) metaEl.textContent = `${postDate} · Tap to listen 🎧`;
+      if (cardEl && post.link) cardEl.href = post.link;
+    }
+  } catch(e) {
+    // silently fail — fallback text already showing
+  }
+}
+
 // ── INIT ────────────────────────────────────────────────────────
 window.addEventListener('load', async () => {
   initMap();
