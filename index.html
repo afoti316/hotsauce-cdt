@@ -793,6 +793,9 @@ function buildDailySummary(rows) {
       day.milesToday += r.milesToday;
     }
     day.milesToday = Math.round(day.milesToday * 10) / 10;
+    // Sum elevation gain/loss across all pings in the day
+    day.elevGain += (r.elevGain || 0);
+    day.elevLoss += (r.elevLoss || 0);
   });
   return Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
 }
