@@ -1005,14 +1005,20 @@ function renderPanel() {
   const totalElevGain = checkins.reduce((s, c) => s + (c.elevGain || 0), 0);
   const everests = (totalElevGain / 29032).toFixed(1);
 
-  // Pace rank vs historic hikers
-  // Historic: avg hiker does ~22.7 mi/day overall but starts slow
-  // Day-adjusted expected pace: early = 10-12, mid = 18-22, late = 25+
-  const dayNum = last.hikingDayNum || hikingOnly.length;
-  const expectedPace = dayNum <= 30 ? 10 : dayNum <= 90 ? 20 : 27;
-  const paceRank = Math.min(99, Math.max(1, Math.round(
-    50 + ((rollingAvg - expectedPace) / expectedPace) * 80
-  )));
+  // Pace rank vs historic CDT finishers
+  // Average finisher: 22.7 mi/day overall
+  // Top 10%: 28+ mi/day, Top 25%: 25+ mi/day, Top 50%: 22+ mi/day
+  // Using rolling 7-day avg vs historic distribution
+  const avgMilesPerDay = checkins.length > 0
+    ? last.cumulative / Math.max(1, last.hikingDayNum || hikingOnly.length)
+    : 0;
+  let paceRank;
+  if (avgMilesPerDay >= 28)      paceRank = 90;
+  else if (avgMilesPerDay >= 25) paceRank = 75;
+  else if (avgMilesPerDay >= 22) paceRank = 50;
+  else if (avgMilesPerDay >= 18) paceRank = 35;
+  else if (avgMilesPerDay >= 15) paceRank = 20;
+  else                            paceRank = 10;
 
   // Last check-in card
   document.getElementById('last-message').textContent =
