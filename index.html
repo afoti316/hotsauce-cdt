@@ -1134,7 +1134,7 @@ function renderChart() {
       datasets: [
         {
           label: 'Miles',
-          data: miles,
+          data: miles.map(m => Math.min(m, 60)),
           backgroundColor: checkins.map(c =>
             c.outlierFlag === 'hitchhike' ? 'rgba(212,135,10,0.7)' :
             c.outlierFlag ? 'rgba(139,158,138,0.5)' :
@@ -1162,6 +1162,7 @@ function renderChart() {
         x: { display: false },
         y: {
           display: true,
+          max: 65,
           grid: { color: 'rgba(0,0,0,0.05)' },
           ticks: {
             font: { family: 'DM Mono', size: 9 },
