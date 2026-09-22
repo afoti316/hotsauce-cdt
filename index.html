@@ -621,6 +621,12 @@
         <div class="checkin-meta" id="last-meta"></div>
       </div>
 
+      <!-- Completion banner -->
+      <div style="background:linear-gradient(135deg,#E8450A,#d4870a);padding:14px 16px;border-bottom:2px solid #d4870a;text-align:center;">
+        <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:white;margin-bottom:4px;">🎉 He Made It!</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:rgba(255,255,255,0.85);letter-spacing:0.08em;">3,040 MILES · MEXICO TO CANADA · 140 DAYS</div>
+      </div>
+
       <!-- Substack audio card -->
       <a class="substack-card" id="substack-card" href="https://saucyhikes.substack.com" target="_blank" rel="noopener">
         <div class="substack-label">🎧 Latest audio from Hot Sauce</div>
@@ -657,21 +663,13 @@
           <div class="stat-value gold" id="stat-avg">—</div>
           <div class="stat-sub">rolling 7-day</div>
         </div>
+
         <div class="stat-cell">
-          <div class="stat-label">Pace Rank</div>
-          <div class="stat-value sage" id="stat-rank">—</div>
-          <div class="stat-sub">vs historic hikers</div>
+          <div class="stat-label">Days on Trail</div>
+          <div class="stat-value" id="stat-days">140</div>
+          <div class="stat-sub">May 7 → Sep 21</div>
         </div>
-        <div class="stat-cell">
-          <div class="stat-label">Hiking Days</div>
-          <div class="stat-value" id="stat-days">—</div>
-          <div class="stat-sub">on trail</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-label">Everests</div>
-          <div class="stat-value gold" id="stat-everest">—</div>
-          <div class="stat-sub">climbed (29,032 ft ea)</div>
-        </div>
+
       </div>
 
       <!-- Miles per day chart -->
@@ -706,7 +704,7 @@
 // ── CONFIG ─────────────────────────────────────────────────────
 const SHEET_ID   = '1ds57E5XZT_s9mvfCRzZntJ91QjcWlhNyGIyvp3IHOzs';
 const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxq_LaOQjHfeIjc4SqcwACRbISrSTlFN6CrV3W1aj07zjdmMNdHb83GoY2ztTSpJ_1K/exec';
-const TOTAL_MILES = 3039.8; // Official CDT total miles
+const TOTAL_MILES = 3040; // Official CDT total miles — Anthony finished!
 const CDT_MILE_OFFSET = 8.33; // Calibrated offset
 
 
@@ -1012,13 +1010,7 @@ function renderPanel() {
   const avgMilesPerDay = checkins.length > 0
     ? last.cumulative / Math.max(1, last.hikingDayNum || hikingOnly.length)
     : 0;
-  let paceRank;
-  if (avgMilesPerDay >= 28)      paceRank = 90;
-  else if (avgMilesPerDay >= 25) paceRank = 75;
-  else if (avgMilesPerDay >= 22) paceRank = 50;
-  else if (avgMilesPerDay >= 18) paceRank = 35;
-  else if (avgMilesPerDay >= 15) paceRank = 20;
-  else                            paceRank = 10;
+  const paceRank = 0; // removed
 
   // Last check-in card
   document.getElementById('last-message').textContent =
@@ -1043,7 +1035,7 @@ function renderPanel() {
   document.getElementById('stat-avg').textContent    = rollingAvg.toFixed(1);
   document.getElementById('stat-rank').textContent   = `Top ${100 - paceRank}%`;
   document.getElementById('stat-days').textContent   = hikingOnly.length;
-  document.getElementById('stat-everest').textContent = everests + '×';
+
 }
 
 // ── MAP MARKERS ──────────────────────────────────────────────────
