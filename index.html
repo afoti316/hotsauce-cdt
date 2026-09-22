@@ -1017,17 +1017,8 @@ function renderPanel() {
     : 0);
 
   // Total elevation gain across all hiking days
-  const totalElevGain = checkins.reduce((s, c) => s + (c.elevGain || 0), 0);
-  const everests = (totalElevGain / 29032).toFixed(1);
 
-  // Pace rank vs historic CDT finishers
-  // Average finisher: 22.7 mi/day overall
-  // Top 10%: 28+ mi/day, Top 25%: 25+ mi/day, Top 50%: 22+ mi/day
-  // Using rolling 7-day avg vs historic distribution
-  const avgMilesPerDay = checkins.length > 0
-    ? last.cumulative / Math.max(1, last.hikingDayNum || hikingOnly.length)
-    : 0;
-  const paceRank = 0; // removed
+  const avgMilesPerDay = checkins.length > 0 ? last.cumulative / 140 : 0;
 
   // Last check-in card
   document.getElementById('last-message').textContent =
@@ -1050,8 +1041,6 @@ function renderPanel() {
   document.getElementById('stat-total').textContent  = totalMiles.toFixed(1);
   document.getElementById('stat-today').textContent  = last.milesToday.toFixed(1);
   document.getElementById('stat-avg').textContent    = rollingAvg.toFixed(1);
-  document.getElementById('stat-rank').textContent   = `Top ${100 - paceRank}%`;
-  document.getElementById('stat-days').textContent   = hikingOnly.length;
 
 }
 
